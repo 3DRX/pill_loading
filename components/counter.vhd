@@ -20,7 +20,7 @@ end entity counter;
 architecture behav of counter is
     signal temp: integer := 0;
 begin
-    process(CLK)
+    process(CLK, RST)
     begin
         if RST = '1' then
             temp <= 0;
