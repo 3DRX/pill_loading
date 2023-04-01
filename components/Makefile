@@ -1,6 +1,6 @@
 GHDL=ghdl
 FLAGS="--std=08"
-NAME="counter"
+NAME="divider"
 
 all:
 	$(GHDL) -a $(FLAGS) $(NAME)_tb.vhd $(NAME).vhd
