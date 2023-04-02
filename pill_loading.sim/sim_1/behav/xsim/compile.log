@@ -1,0 +1,8 @@
+INFO: [VRFC 10-163] Analyzing VHDL file "/home/kjy/Documents/vivado_projects/pill_loading/components/counter.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'counter'
+INFO: [VRFC 10-163] Analyzing VHDL file "/home/kjy/Documents/vivado_projects/pill_loading/components/divider.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'divider'
+INFO: [VRFC 10-163] Analyzing VHDL file "/home/kjy/Documents/vivado_projects/pill_loading/components/mos_driver.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'mos_driver'
+INFO: [VRFC 10-163] Analyzing VHDL file "/home/kjy/Documents/vivado_projects/pill_loading/components/main.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'main'

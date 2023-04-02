@@ -22,12 +22,11 @@ begin
     U1: divider port map(
                             CLK => clk,
                             RST => rst,
-                            N => n,
+                            N => 4,
                             O => o
                         );
     stimulus:
     process begin
-        n <= 4;
         wait for 10 ns;
         clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0'; wait for 10 ns;
         clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0'; wait for 10 ns;
