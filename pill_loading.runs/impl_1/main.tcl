@@ -123,6 +123,7 @@ start_step write_bitstream
 set ACTIVE_STEP write_bitstream
 set rc [catch {
   create_msg_db write_bitstream.pb
+  set_param xicom.use_bs_reader 1
   set_param chipscope.maxJobs 2
   open_checkpoint main_routed.dcp
   set_property webtalk.parent_dir /home/kjy/Documents/vivado_projects/pill_loading/pill_loading.cache/wt [current_project]

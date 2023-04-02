@@ -31,6 +31,8 @@ architecture Behavioral of main is
         port(
                 CLK: in std_logic;
                 IPT: in integer;
+                RST: in std_logic;
+                DOT: in std_logic;
                 OUTNUM: out std_logic_vector(7 downto 0);
                 SELNUM: out std_logic_vector(7 downto 0)
             );
@@ -52,10 +54,11 @@ architecture Behavioral of main is
             );
     end component;
 begin
+    -- 时钟分频成秒
     the_divider: divider port map(
                                      CLK => CLK,
                                      RST => RST,
-                                     N => 5000000,
+                                     N => 100000000,
                                      O => divided_clock
                                  );
 
@@ -68,15 +71,17 @@ begin
     --                              );
 
     the_counter: counter port map(
-                                     CLK => CLK,
+                                     CLK => divided_clock,
                                      RST => RST,
                                      N => 10,
                                      O => output_mos
                                  );
 
     the_mos_driver: mos_driver port map(
-                                           CLK => CLK,
+                                           CLK => divided_clock,
                                            IPT => output_mos,
+                                           RST => RST,
+                                           DOT => '1',
                                            OUTNUM => OUTNUM,
                                            SELNUM => SELNUM
                                        );
