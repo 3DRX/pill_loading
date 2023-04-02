@@ -1,2 +1,3 @@
-# pill_loading
-A silly FPGA project
+# Pill Loading
+
+> A silly FPGA project using vivado
