@@ -1,9 +1,0 @@
-# compile vhdl design source files
-vhdl xil_defaultlib  \
-"../../../../components/counter.vhd" \
-"../../../../components/divider.vhd" \
-"../../../../components/mos_driver.vhd" \
-"../../../../components/main.vhd" \
-
-# Do not sort compile order
-nosort
