@@ -23,13 +23,16 @@ architecture Behavioral of main is
     -- 分频后的时钟
     signal one_second: std_logic := '0';
     signal mos_refresh_clk: std_logic := '0';
-    -- 十进制计数器输出
-    signal counter_output: integer := 0;
+    signal bling_clk: std_logic := '0';
+    -- 计数器输出
+    signal ten_counter: integer := 0;
     -- 数码管显示输出
     type ints is array (1 to 8) of integer;
     type dots is array (1 to 8) of std_logic;
     signal mos_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
     signal mos_dots: dots := ('1', '1', '1', '1', '1', '1', '1', '1');
+    signal o_mos_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
+    signal o_mos_dots: dots := ('1', '1', '1', '1', '1', '1', '1', '1');
     -- 正在闪烁的位
     signal bling_bit: integer := 1;
     -- 正在被按下的按钮
@@ -79,6 +82,16 @@ architecture Behavioral of main is
                  O: out integer
              );
     end component;
+    component bling_driver
+        port (
+        D8, D7, D6, D5, D4, D3, D2, D1: in integer;
+        DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
+        bling_clk: in std_logic;
+        bling_bit: integer;
+        OD8, OD7, OD6, OD5, OD4, OD3, OD2, OD1: in integer;
+        ODOT8, ODOT7, ODOT6, ODOT5, ODOT4, ODOT3, ODOT2, ODOT1: in std_logic
+    );
+    end component;
 begin
 
     -- 时钟分频成秒
@@ -90,11 +103,19 @@ begin
                 O => one_second
             );
 
+    divide_bling: divider
+    port map(
+                CLK => CLK,
+                RST => RST,
+                N => 50000000,
+                O => bling_clk
+            );
+
     divide_mos_refresh: divider
     port map(
                 CLK => CLK,
                 RST => RST,
-                N => 10000,
+                N => 100000,
                 O => mos_refresh_clk
             );
 
@@ -112,25 +133,63 @@ begin
                 CLK => one_second,
                 RST => RST,
                 N => 10,
-                O => counter_output
+                O => ten_counter
             );
 
-    process(counter_output)
+    process(ten_counter)
     begin
-        mos_ints <= (
-                    counter_output,
-                    counter_output,
-                    counter_output,
-                    counter_output,
-                    counter_output,
-                    counter_output,
-                    counter_output,
-                    counter_output
-                );
+        if ten_counter < 6 then
+            mos_ints <= (
+                        10,
+                        10,
+                        4,
+                        1,
+                        5,
+                        4,
+                        1,
+                        1
+                    );
+        else
+            mos_ints <= (
+                        10,
+                        0,
+                        1,
+                        8,
+                        9,
+                        1,
+                        9,
+                        1
+                    );
+        end if;
     end process;
 
     the_mos_driver: mos_driver
     port map(
+                D8 => o_mos_ints(8),
+                D7 => o_mos_ints(7),
+                D6 => o_mos_ints(6),
+                D5 => o_mos_ints(5),
+                D4 => o_mos_ints(4),
+                D3 => o_mos_ints(3),
+                D2 => o_mos_ints(2),
+                D1 => o_mos_ints(1),
+                DOT8 => o_mos_dots(8),
+                DOT7 => o_mos_dots(7),
+                DOT6 => o_mos_dots(6),
+                DOT5 => o_mos_dots(5),
+                DOT4 => o_mos_dots(4),
+                DOT3 => o_mos_dots(3),
+                DOT2 => o_mos_dots(2),
+                DOT1 => o_mos_dots(1),
+                CLK => mos_refresh_clk,
+                OUTNUM => OUTNUM,
+                SELNUM => SELNUM
+            );
+
+    the_bling_driver: bling_driver
+    port map(
+                bling_clk => bling_clk,
+                bling_bit => bling_bit,
                 D8 => mos_ints(8),
                 D7 => mos_ints(7),
                 D6 => mos_ints(6),
@@ -147,37 +206,50 @@ begin
                 DOT3 => mos_dots(3),
                 DOT2 => mos_dots(2),
                 DOT1 => mos_dots(1),
-                CLK => mos_refresh_clk,
-                OUTNUM => OUTNUM,
-                SELNUM => SELNUM
+                OD8 => o_mos_ints(8),
+                OD7 => o_mos_ints(7),
+                OD6 => o_mos_ints(6),
+                OD5 => o_mos_ints(5),
+                OD4 => o_mos_ints(4),
+                OD3 => o_mos_ints(3),
+                OD2 => o_mos_ints(2),
+                OD1 => o_mos_ints(1),
+                ODOT8 => o_mos_dots(8),
+                ODOT7 => o_mos_dots(7),
+                ODOT6 => o_mos_dots(6),
+                ODOT5 => o_mos_dots(5),
+                ODOT4 => o_mos_dots(4),
+                ODOT3 => o_mos_dots(3),
+                ODOT2 => o_mos_dots(2),
+                ODOT1 => o_mos_dots(1)
             );
 
--- the_btn_driver: btn_driver
--- port map(
---             S1 => S1,
---             S2 => S2,
---             S3 => S3,
---             S4 => S4,
---             S5 => S5,
---             S6 => S6,
---             O => btn_pressed
---         );
+    the_btn_driver: btn_driver
+    port map(
+                S1 => S1,
+                S2 => S2,
+                S3 => S3,
+                S4 => S4,
+                S5 => S5,
+                S6 => S6,
+                O => btn_pressed
+            );
 
--- process(btn_pressed)
--- begin
---     if btn_pressed = 2 then
---         if bling_bit = 8 then
---             bling_bit <= 1;
---         else
---             bling_bit <= bling_bit + 1;
---         end if;
---     elsif btn_pressed = 1 then
---         if bling_bit = 1 then
---             bling_bit <= 8;
---         else
---             bling_bit <= bling_bit - 1;
---         end if;
---     end if;
--- end process;
+    process(btn_pressed)
+    begin
+        if btn_pressed = 2 then
+            if bling_bit = 8 then
+                bling_bit <= 1;
+            else
+                bling_bit <= bling_bit + 1;
+            end if;
+        elsif btn_pressed = 1 then
+            if bling_bit = 1 then
+                bling_bit <= 8;
+            else
+                bling_bit <= bling_bit - 1;
+            end if;
+        end if;
+    end process;
 
 end Behavioral;
