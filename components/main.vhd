@@ -22,6 +22,7 @@ architecture Behavioral of main is
     signal ipt_num: integer range 0 to 9;
     -- 分频后的时钟
     signal one_second: std_logic := '0';
+    signal twenty_milo_second: std_logic := '0';
     signal mos_refresh_clk: std_logic := '0';
     signal bling_clk: std_logic := '0';
     -- 计数器输出
@@ -34,9 +35,9 @@ architecture Behavioral of main is
     signal o_mos_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
     signal o_mos_dots: dots := ('1', '1', '1', '1', '1', '1', '1', '1');
     -- 正在闪烁的位
-    signal bling_bit: integer := 1;
+    signal bling_bit: integer range 1 to 8 := 1;
     -- 正在被按下的按钮
-    signal btn_pressed: integer := 0;
+    signal btn_pressed: std_logic_vector(5 downto 0) := "000000";
     component matrix_input
         port(
                 CLK:in std_logic;
@@ -79,7 +80,8 @@ architecture Behavioral of main is
                  S4: in std_logic;
                  S5: in std_logic;
                  S6: in std_logic;
-                 O: out integer
+                 BTN_CLK: in std_logic;
+                 O: out std_logic_vector(5 downto 0)
              );
     end component;
     component bling_driver
@@ -101,6 +103,14 @@ begin
                 RST => RST,
                 N => 100000000,
                 O => one_second
+            );
+
+    divide_btn: divider
+    port map(
+                CLK => CLK,
+                RST => RST,
+                N => 2000000,
+                O => twenty_milo_second
             );
 
     divide_bling: divider
@@ -138,16 +148,16 @@ begin
 
     process(ten_counter)
     begin
-        mos_ints <= (
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter
-                );
+    -- mos_ints <= (
+    --             ten_counter,
+    --             ten_counter,
+    --             ten_counter,
+    --             ten_counter,
+    --             ten_counter,
+    --             ten_counter,
+    --             ten_counter,
+    --             ten_counter
+    --         );
     end process;
 
     the_mos_driver: mos_driver
@@ -219,24 +229,40 @@ begin
                 S4 => S4,
                 S5 => S5,
                 S6 => S6,
+                BTN_CLK => twenty_milo_second,
                 O => btn_pressed
             );
 
-    process(btn_pressed)
+    process(btn_pressed(0), btn_pressed(1))
     begin
-        if btn_pressed = 2 then
-            if bling_bit = 8 then
-                bling_bit <= 1;
-            else
-                bling_bit <= bling_bit + 1;
-            end if;
-        elsif btn_pressed = 1 then
+        if rising_edge(btn_pressed(0)) then
             if bling_bit = 1 then
                 bling_bit <= 8;
             else
                 bling_bit <= bling_bit - 1;
             end if;
         end if;
+        if rising_edge(btn_pressed(1)) then
+            if bling_bit = 8 then
+                bling_bit <= 1;
+            else
+                bling_bit <= bling_bit + 1;
+            end if;
+        end if;
+    end process;
+
+    process(bling_bit)
+    begin
+        mos_ints <= (
+                    bling_bit,
+                    bling_bit,
+                    bling_bit,
+                    bling_bit,
+                    bling_bit,
+                    bling_bit,
+                    bling_bit,
+                    bling_bit
+                );
     end process;
 
 end Behavioral;

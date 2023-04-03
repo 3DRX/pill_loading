@@ -17,29 +17,36 @@ entity btn_driver is
              S4: in std_logic;
              S5: in std_logic;
              S6: in std_logic;
-             O: out integer
+             BTN_CLK: in std_logic;
+             O: out std_logic_vector(5 downto 0)
          );
 end entity btn_driver;
 
 architecture rtl of btn_driver is
-    signal out_temp: integer := 0;
+    signal out_temp: std_logic_vector(5 downto 0) := "000000";
 begin
-    process(S1, S2, S3, S4, S5, S6)
+    process(BTN_CLK)
     begin
-        if S1 = '1' then
-            out_temp <= 1;
-        elsif S2 = '1' then
-            out_temp <= 2;
-        elsif S3 = '1' then
-            out_temp <= 3;
-        elsif S4 = '1' then
-            out_temp <= 4;
-        elsif S5 = '1' then
-            out_temp <= 5;
-        elsif S6 = '1' then
-            out_temp <= 6;
-        else
-            out_temp <= 0;
+        out_temp <= "000000";
+        if BTN_CLK'event and BTN_CLK = '1' then
+            if S1 = '1' then
+                out_temp(0) <= '1';
+            end if;
+            if S2 = '1' then
+                out_temp(1) <= '1';
+            end if;
+            if S3 = '1' then
+                out_temp(2) <= '1';
+            end if;
+            if S4 = '1' then
+                out_temp(3) <= '1';
+            end if;
+            if S5 = '1' then
+                out_temp(4) <= '1';
+            end if;
+            if S6 = '1' then
+                out_temp(5) <= '1';
+            end if;
         end if;
     end process;
     O <= out_temp;

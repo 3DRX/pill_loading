@@ -65,6 +65,8 @@ begin
                 out_temp <= "0000100" & the_dots(refreshing_bit);
             elsif the_ints(refreshing_bit) = 10 then
                 out_temp <= "11111111";
+            else
+                out_temp <= "11111101";
             end if;
 
             if refreshing_bit = 1 then
