@@ -11,14 +11,12 @@ architecture test of mos_driver_tb is
     signal the_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
     signal the_dots: dots := ('1', '1', '1', '1', '1', '1', '1', '1');
     signal clk: std_logic := '0';
-    signal rst: std_logic := '0';
     signal OUTNUM: std_logic_vector(7 downto 0) := "00000000";
     signal SELNUM: std_logic_vector(7 downto 0) := "00000000";
     component mos_driver
         port(
         D8, D7, D6, D5, D4, D3, D2, D1: in integer;
         CLK: in std_logic;
-        RST: in std_logic;
         DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
         OUTNUM: out std_logic_vector(7 downto 0);
         SELNUM: out std_logic_vector(7 downto 0)
@@ -45,7 +43,6 @@ begin
                 DOT2 => the_dots(2),
                 DOT1 => the_dots(1),
                 CLK => clk,
-                RST => rst,
                 OUTNUM => OUTNUM,
                 SELNUM => SELNUM
             );

@@ -41,7 +41,6 @@ architecture Behavioral of main is
         port(
         D8, D7, D6, D5, D4, D3, D2, D1: in integer;
         CLK: in std_logic;
-        RST: in std_logic;
         DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
         OUTNUM: out std_logic_vector(7 downto 0);
         SELNUM: out std_logic_vector(7 downto 0)
@@ -120,7 +119,6 @@ begin
                 DOT2 => '1',
                 DOT1 => '1',
                 CLK => CLK,
-                RST => RST,
                 OUTNUM => OUTNUM,
                 SELNUM => SELNUM
             );

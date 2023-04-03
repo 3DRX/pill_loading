@@ -1,15 +1,13 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- 0 < IPT < 9
--- IPT = 10 清零
--- RST 清零
+-- 0 < D < 9
+-- D = 10 清零
 -- DOT 小数点，'1' 不亮，'0' 亮
 entity mos_driver is
     port(
     D8, D7, D6, D5, D4, D3, D2, D1: in integer;
     CLK: in std_logic;
-    RST: in std_logic;
     DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
     OUTNUM: out std_logic_vector(7 downto 0);
     SELNUM: out std_logic_vector(7 downto 0)
@@ -25,29 +23,26 @@ architecture Behavioral of mos_driver is
     signal sel_temp: std_logic_vector(7 downto 0) := "11111111";
     signal refreshing_bit: integer := 1;
 begin
-    process(CLK, RST)
+    process(CLK)
     begin
-        the_ints(1) <= D1;
-        the_ints(2) <= D2;
-        the_ints(3) <= D3;
-        the_ints(4) <= D4;
-        the_ints(5) <= D5;
-        the_ints(6) <= D6;
-        the_ints(7) <= D7;
-        the_ints(8) <= D8;
+        if CLK'event and CLK = '1' then
+            the_ints(1) <= D1;
+            the_ints(2) <= D2;
+            the_ints(3) <= D3;
+            the_ints(4) <= D4;
+            the_ints(5) <= D5;
+            the_ints(6) <= D6;
+            the_ints(7) <= D7;
+            the_ints(8) <= D8;
+            the_dots(1) <= DOT1;
+            the_dots(2) <= DOT2;
+            the_dots(3) <= DOT3;
+            the_dots(4) <= DOT4;
+            the_dots(5) <= DOT5;
+            the_dots(6) <= DOT6;
+            the_dots(7) <= DOT7;
+            the_dots(8) <= DOT8;
 
-        the_dots(1) <= DOT1;
-        the_dots(2) <= DOT2;
-        the_dots(3) <= DOT3;
-        the_dots(4) <= DOT4;
-        the_dots(5) <= DOT5;
-        the_dots(6) <= DOT6;
-        the_dots(7) <= DOT7;
-        the_dots(8) <= DOT8;
-
-        if RST = '1' then
-            out_temp <= "11111111";
-        elsif CLK'event and CLK = '1' then
             if the_ints(refreshing_bit) = 0 then
                 out_temp <= "0000001" & the_dots(refreshing_bit);
             elsif the_ints(refreshing_bit) = 1 then
