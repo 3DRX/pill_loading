@@ -24,6 +24,10 @@ architecture Behavioral of main is
     signal divided_clock: std_logic := '0';
     -- 数码管显示输出
     signal output_mos: integer := 0;
+    -- 正在闪烁的位
+    signal bling_bit: integer := 1;
+    -- 正在被按下的按钮
+    signal btn_pressed: integer := 0;
     component matrix_input
         port(
                 CLK:in std_logic;
@@ -35,12 +39,13 @@ architecture Behavioral of main is
     end component;
     component mos_driver
         port(
-                IPT: in integer;
-                RST: in std_logic;
-                DOT: in std_logic;
-                OUTNUM: out std_logic_vector(7 downto 0);
-                SELNUM: out std_logic_vector(7 downto 0)
-            );
+        D8, D7, D6, D5, D4, D3, D2, D1: in integer;
+        CLK: in std_logic;
+        RST: in std_logic;
+        DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
+        OUTNUM: out std_logic_vector(7 downto 0);
+        SELNUM: out std_logic_vector(7 downto 0)
+    );
     end component;
     component divider
         port(
@@ -50,14 +55,14 @@ architecture Behavioral of main is
                 O: out std_logic
             );
     end component;
-    -- component counter
-    --     port(
-    --             CLK: in std_logic;
-    --             RST: in std_logic;
-    --             N: in integer;
-    --             O: out integer
-    --         );
-    -- end component;
+    component counter
+        port(
+                CLK: in std_logic;
+                RST: in std_logic;
+                N: in integer;
+                O: out integer
+            );
+    end component;
     component btn_driver
         port (
                  S1: in std_logic;
@@ -98,22 +103,54 @@ begin
 
     the_mos_driver: mos_driver
     port map(
-                IPT => output_mos,
+                D8 => 8,
+                D7 => 7,
+                D6 => 6,
+                D5 => 5,
+                D4 => 4,
+                D3 => 3,
+                D2 => 2,
+                D1 => 1,
+                DOT8 => '1',
+                DOT7 => '1',
+                DOT6 => '1',
+                DOT5 => '1',
+                DOT4 => '1',
+                DOT3 => '1',
+                DOT2 => '1',
+                DOT1 => '1',
+                CLK => CLK,
                 RST => RST,
-                DOT => '1',
                 OUTNUM => OUTNUM,
                 SELNUM => SELNUM
             );
 
-    the_btn_driver: btn_driver
-    port map(
-                S1 => S1,
-                S2 => S2,
-                S3 => S3,
-                S4 => S4,
-                S5 => S5,
-                S6 => S6,
-                O => output_mos
-            );
+-- the_btn_driver: btn_driver
+-- port map(
+--             S1 => S1,
+--             S2 => S2,
+--             S3 => S3,
+--             S4 => S4,
+--             S5 => S5,
+--             S6 => S6,
+--             O => btn_pressed
+--         );
+
+-- process(btn_pressed)
+-- begin
+--     if btn_pressed = 2 then
+--         if bling_bit = 8 then
+--             bling_bit <= 1;
+--         else
+--             bling_bit <= bling_bit + 1;
+--         end if;
+--     elsif btn_pressed = 1 then
+--         if bling_bit = 1 then
+--             bling_bit <= 8;
+--         else
+--             bling_bit <= bling_bit - 1;
+--         end if;
+--     end if;
+-- end process;
 
 end Behavioral;
