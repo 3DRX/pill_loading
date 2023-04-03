@@ -71,32 +71,31 @@ begin
             elsif the_ints(refreshing_bit) = 10 then
                 out_temp <= "11111111";
             end if;
-        end if;
 
-        if refreshing_bit = 1 then
-            sel_temp <= "11111110";
-        elsif refreshing_bit = 2 then
-            sel_temp <= "11111101";
-        elsif refreshing_bit = 3 then
-            sel_temp <= "11111011";
-        elsif refreshing_bit = 4 then
-            sel_temp <= "11110111";
-        elsif refreshing_bit = 5 then
-            sel_temp <= "11101111";
-        elsif refreshing_bit = 6 then
-            sel_temp <= "11011111";
-        elsif refreshing_bit = 7 then
-            sel_temp <= "10111111";
-        elsif refreshing_bit = 8 then
-            sel_temp <= "01111111";
-        end if;
+            if refreshing_bit = 1 then
+                sel_temp <= "11111110";
+            elsif refreshing_bit = 2 then
+                sel_temp <= "11111101";
+            elsif refreshing_bit = 3 then
+                sel_temp <= "11111011";
+            elsif refreshing_bit = 4 then
+                sel_temp <= "11110111";
+            elsif refreshing_bit = 5 then
+                sel_temp <= "11101111";
+            elsif refreshing_bit = 6 then
+                sel_temp <= "11011111";
+            elsif refreshing_bit = 7 then
+                sel_temp <= "10111111";
+            elsif refreshing_bit = 8 then
+                sel_temp <= "01111111";
+            end if;
 
-        if refreshing_bit = 8 then
-            refreshing_bit <= 1;
-        else
-            refreshing_bit <= refreshing_bit + 1;
+            if refreshing_bit = 8 then
+                refreshing_bit <= 1;
+            else
+                refreshing_bit <= refreshing_bit + 1;
+            end if;
         end if;
-
     end process;
     OUTNUM <= out_temp;
     SELNUM <= sel_temp;
