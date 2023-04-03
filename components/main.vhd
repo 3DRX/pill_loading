@@ -21,7 +21,8 @@ end entity main;
 architecture Behavioral of main is
     signal ipt_num: integer range 0 to 9;
     -- 分频后的时钟
-    signal 1s_clock: std_logic := '0';
+    signal one_second: std_logic := '0';
+    signal mos_refresh_clk: std_logic := '0';
     -- 十进制计数器输出
     signal counter_output: integer := 0;
     -- 数码管显示输出
@@ -81,13 +82,21 @@ architecture Behavioral of main is
 begin
 
     -- 时钟分频成秒
-    -- the_divider: divider
-    -- port map(
-    --             CLK => CLK,
-    --             RST => RST,
-    --             N => 100000000,
-    --             O => 1s_clock
-    --         );
+    divide_second: divider
+    port map(
+                CLK => CLK,
+                RST => RST,
+                N => 100000000,
+                O => one_second
+            );
+
+    divide_mos_refresh: divider
+    port map(
+                CLK => CLK,
+                RST => RST,
+                N => 10000,
+                O => mos_refresh_clk
+            );
 
     -- the_matrix_input: matrix_input
     -- port map(
@@ -100,7 +109,7 @@ begin
 
     the_counter: counter
     port map(
-                CLK => 1s_clock,
+                CLK => one_second,
                 RST => RST,
                 N => 10,
                 O => counter_output
@@ -116,7 +125,7 @@ begin
                     counter_output,
                     counter_output,
                     counter_output,
-                    counter_output,
+                    counter_output
                 );
     end process;
 
@@ -138,7 +147,7 @@ begin
                 DOT3 => mos_dots(3),
                 DOT2 => mos_dots(2),
                 DOT1 => mos_dots(1),
-                CLK => CLK,
+                CLK => mos_refresh_clk,
                 OUTNUM => OUTNUM,
                 SELNUM => SELNUM
             );
