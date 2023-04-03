@@ -21,9 +21,14 @@ end entity main;
 architecture Behavioral of main is
     signal ipt_num: integer range 0 to 9;
     -- 分频后的时钟
-    signal divided_clock: std_logic := '0';
+    signal 1s_clock: std_logic := '0';
+    -- 十进制计数器输出
+    signal counter_output: integer := 0;
     -- 数码管显示输出
-    signal output_mos: integer := 0;
+    type ints is array (1 to 8) of integer;
+    type dots is array (1 to 8) of std_logic;
+    signal mos_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
+    signal mos_dots: dots := ('1', '1', '1', '1', '1', '1', '1', '1');
     -- 正在闪烁的位
     signal bling_bit: integer := 1;
     -- 正在被按下的按钮
@@ -74,13 +79,14 @@ architecture Behavioral of main is
              );
     end component;
 begin
+
     -- 时钟分频成秒
     -- the_divider: divider
     -- port map(
     --             CLK => CLK,
     --             RST => RST,
     --             N => 100000000,
-    --             O => divided_clock
+    --             O => 1s_clock
     --         );
 
     -- the_matrix_input: matrix_input
@@ -92,32 +98,46 @@ begin
     --             seg_num => output_mos
     --         );
 
-    -- the_counter: counter
-    -- port map(
-    --             CLK => divided_clock,
-    --             RST => RST,
-    --             N => 10,
-    --             O => output_mos
-    --         );
+    the_counter: counter
+    port map(
+                CLK => 1s_clock,
+                RST => RST,
+                N => 10,
+                O => counter_output
+            );
+
+    process(counter_output)
+    begin
+        mos_ints <= (
+                    counter_output,
+                    counter_output,
+                    counter_output,
+                    counter_output,
+                    counter_output,
+                    counter_output,
+                    counter_output,
+                    counter_output,
+                );
+    end process;
 
     the_mos_driver: mos_driver
     port map(
-                D8 => 8,
-                D7 => 7,
-                D6 => 6,
-                D5 => 5,
-                D4 => 4,
-                D3 => 3,
-                D2 => 2,
-                D1 => 1,
-                DOT8 => '1',
-                DOT7 => '1',
-                DOT6 => '1',
-                DOT5 => '1',
-                DOT4 => '1',
-                DOT3 => '1',
-                DOT2 => '1',
-                DOT1 => '1',
+                D8 => mos_ints(8),
+                D7 => mos_ints(7),
+                D6 => mos_ints(6),
+                D5 => mos_ints(5),
+                D4 => mos_ints(4),
+                D3 => mos_ints(3),
+                D2 => mos_ints(2),
+                D1 => mos_ints(1),
+                DOT8 => mos_dots(8),
+                DOT7 => mos_dots(7),
+                DOT6 => mos_dots(6),
+                DOT5 => mos_dots(5),
+                DOT4 => mos_dots(4),
+                DOT3 => mos_dots(3),
+                DOT2 => mos_dots(2),
+                DOT1 => mos_dots(1),
                 CLK => CLK,
                 OUTNUM => OUTNUM,
                 SELNUM => SELNUM
