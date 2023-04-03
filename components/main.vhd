@@ -7,6 +7,12 @@ entity main is
             RST: in std_logic;
             kcol:in std_logic_vector(3 downto 0);
             krow:out std_logic_vector(3 downto 0);
+            S1: in std_logic;
+            S2: in std_logic;
+            S3: in std_logic;
+            S4: in std_logic;
+            S5: in std_logic;
+            S6: in std_logic;
             OUTNUM: out std_logic_vector(7 downto 0);
             SELNUM: out std_logic_vector(7 downto 0)
         );
@@ -44,32 +50,43 @@ architecture Behavioral of main is
                 O: out std_logic
             );
     end component;
--- component counter
---     port(
---             CLK: in std_logic;
---             RST: in std_logic;
---             N: in integer;
---             O: out integer
---         );
--- end component;
+    -- component counter
+    --     port(
+    --             CLK: in std_logic;
+    --             RST: in std_logic;
+    --             N: in integer;
+    --             O: out integer
+    --         );
+    -- end component;
+    component btn_driver
+        port (
+                 S1: in std_logic;
+                 S2: in std_logic;
+                 S3: in std_logic;
+                 S4: in std_logic;
+                 S5: in std_logic;
+                 S6: in std_logic;
+                 O: out integer
+             );
+    end component;
 begin
     -- 时钟分频成秒
-    the_divider: divider
-    port map(
-                CLK => CLK,
-                RST => RST,
-                N => 100000000,
-                O => divided_clock
-            );
+    -- the_divider: divider
+    -- port map(
+    --             CLK => CLK,
+    --             RST => RST,
+    --             N => 100000000,
+    --             O => divided_clock
+    --         );
 
-    the_matrix_input: matrix_input
-    port map(
-                CLK => CLK,
-                CLR => RST,
-                kcol => kcol,
-                krow => krow,
-                seg_num => output_mos
-            );
+    -- the_matrix_input: matrix_input
+    -- port map(
+    --             CLK => CLK,
+    --             CLR => RST,
+    --             kcol => kcol,
+    --             krow => krow,
+    --             seg_num => output_mos
+    --         );
 
     -- the_counter: counter
     -- port map(
@@ -86,6 +103,17 @@ begin
                 DOT => '1',
                 OUTNUM => OUTNUM,
                 SELNUM => SELNUM
+            );
+
+    the_btn_driver: btn_driver
+    port map(
+                S1 => S1,
+                S2 => S2,
+                S3 => S3,
+                S4 => S4,
+                S5 => S5,
+                S6 => S6,
+                O => output_mos
             );
 
 end Behavioral;
