@@ -88,8 +88,8 @@ architecture Behavioral of main is
         DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
         bling_clk: in std_logic;
         bling_bit: integer;
-        OD8, OD7, OD6, OD5, OD4, OD3, OD2, OD1: in integer;
-        ODOT8, ODOT7, ODOT6, ODOT5, ODOT4, ODOT3, ODOT2, ODOT1: in std_logic
+        OD8, OD7, OD6, OD5, OD4, OD3, OD2, OD1: out integer;
+        ODOT8, ODOT7, ODOT6, ODOT5, ODOT4, ODOT3, ODOT2, ODOT1: out std_logic
     );
     end component;
 begin
@@ -138,29 +138,16 @@ begin
 
     process(ten_counter)
     begin
-        if ten_counter < 6 then
-            mos_ints <= (
-                        10,
-                        10,
-                        4,
-                        1,
-                        5,
-                        4,
-                        1,
-                        1
-                    );
-        else
-            mos_ints <= (
-                        10,
-                        0,
-                        1,
-                        8,
-                        9,
-                        1,
-                        9,
-                        1
-                    );
-        end if;
+        mos_ints <= (
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter
+                );
     end process;
 
     the_mos_driver: mos_driver
