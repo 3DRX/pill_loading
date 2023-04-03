@@ -2,7 +2,7 @@
 --           3
 -- 6       2 4 1
 --           5
--- O: 输出编号integer
+-- O: 输出编号integer，在无输入时输出0
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
