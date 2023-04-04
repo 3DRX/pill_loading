@@ -19,6 +19,14 @@ entity main is
 end entity main;
 
 architecture Behavioral of main is
+    -- 消抖后的按钮
+    signal OS1: std_logic;
+    signal OS2: std_logic;
+    signal OS3: std_logic;
+    signal OS4: std_logic;
+    signal OS5: std_logic;
+    signal OS6: std_logic;
+    -- 输入数字
     signal ipt_num: integer range 0 to 9;
     -- 分频后的时钟
     signal one_second: std_logic := '0';
@@ -94,7 +102,54 @@ architecture Behavioral of main is
         ODOT8, ODOT7, ODOT6, ODOT5, ODOT4, ODOT3, ODOT2, ODOT1: out std_logic
     );
     end component;
+    component key_debounce
+        port(
+        clk,key: in std_logic;
+        key_out: out std_logic
+    );
+    end component;
 begin
+    key_debounce1: key_debounce
+    port map(
+                clk => CLK,
+                key => S1,
+                key_out => OS1
+            );
+
+    key_debounce2: key_debounce
+    port map(
+                clk => CLK,
+                key => S2,
+                key_out => OS2
+            );
+
+    key_debounce3: key_debounce
+    port map(
+                clk => CLK,
+                key => S3,
+                key_out => OS3
+            );
+
+    key_debounce4: key_debounce
+    port map(
+                clk => CLK,
+                key => S4,
+                key_out => OS4
+            );
+
+    key_debounce5: key_debounce
+    port map(
+                clk => CLK,
+                key => S5,
+                key_out => OS5
+            );
+
+    key_debounce6: key_debounce
+    port map(
+                clk => CLK,
+                key => S6,
+                key_out => OS6
+            );
 
     -- 时钟分频成秒
     divide_second: divider
@@ -223,30 +278,31 @@ begin
 
     the_btn_driver: btn_driver
     port map(
-                S1 => S1,
-                S2 => S2,
-                S3 => S3,
-                S4 => S4,
-                S5 => S5,
-                S6 => S6,
+                S1 => OS1,
+                S2 => OS2,
+                S3 => OS3,
+                S4 => OS4,
+                S5 => OS5,
+                S6 => OS6,
                 BTN_CLK => twenty_milo_second,
                 O => btn_pressed
             );
 
-    process(btn_pressed(0), btn_pressed(1))
+    process(btn_pressed)
     begin
-        if rising_edge(btn_pressed(0)) then
-            if bling_bit = 1 then
-                bling_bit <= 8;
-            else
-                bling_bit <= bling_bit - 1;
-            end if;
-        end if;
-        if rising_edge(btn_pressed(1)) then
-            if bling_bit = 8 then
-                bling_bit <= 1;
-            else
-                bling_bit <= bling_bit + 1;
+        if rising_edge(btn_pressed(1))then
+            if btn_pressed(1 downto 0) = "01" then
+                if bling_bit = 1 then
+                    bling_bit <= 8;
+                else
+                    bling_bit <= bling_bit - 1;
+                end if;
+            elsif btn_pressed(1 downto 0) = "10" then
+                if bling_bit = 8 then
+                    bling_bit <= 1;
+                else
+                    bling_bit <= bling_bit + 1;
+                end if;
             end if;
         end if;
     end process;
