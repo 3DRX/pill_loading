@@ -13,24 +13,30 @@ entity counter is
             CLK: in std_logic;
             RST: in std_logic;
             N: in integer;
-            O: out integer
+            O: out integer;
+            C: out std_logic
         );
 end entity counter;
 
 architecture behav of counter is
     signal temp: integer := 0;
+    signal Ctemp: std_logic := '0';
 begin
     process(CLK, RST)
     begin
         if RST = '1' then
             temp <= 0;
+            Ctemp <= '0';
         elsif CLK'event and CLK = '1' then
             if temp = N - 1 then
+                Ctemp <= '1';
                 temp <= 0;
             else
+                Ctemp <= '0';
                 temp <= temp + 1;
             end if;
         end if;
     end process;
+    C <= Ctemp;
     O <= temp;
 end architecture behav;

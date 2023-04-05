@@ -77,7 +77,8 @@ architecture Behavioral of main is
                 CLK: in std_logic;
                 RST: in std_logic;
                 N: in integer;
-                O: out integer
+                O: out integer;
+                C: out std_logic
             );
     end component;
     component btn_driver
@@ -198,7 +199,8 @@ begin
                 CLK => one_second,
                 RST => RST,
                 N => 10,
-                O => ten_counter
+                O => ten_counter,
+                C => open
             );
 
     process(ten_counter)
