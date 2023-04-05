@@ -42,8 +42,8 @@ architecture Behavioral of main is
     signal mos_dots: dots := ('1', '1', '1', '1', '1', '1', '1', '1');
     signal o_mos_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
     signal o_mos_dots: dots := ('1', '1', '1', '1', '1', '1', '1', '1');
-    -- 正在闪烁的位
-    signal bling_bit: integer range 1 to 8 := 1;
+    -- 正在闪烁的位，1有效
+    signal bling_bit: std_logic_vector(7 downto 0) := "00000001";
     -- 正在被按下的按钮
     signal btn_pressed: std_logic_vector(5 downto 0) := "000000";
     component matrix_input
@@ -97,7 +97,7 @@ architecture Behavioral of main is
         D8, D7, D6, D5, D4, D3, D2, D1: in integer;
         DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
         bling_clk: in std_logic;
-        bling_bit: integer;
+        bling_bit: in std_logic_vector(7 downto 0);
         OD8, OD7, OD6, OD5, OD4, OD3, OD2, OD1: out integer;
         ODOT8, ODOT7, ODOT6, ODOT5, ODOT4, ODOT3, ODOT2, ODOT1: out std_logic
     );
@@ -203,16 +203,16 @@ begin
 
     process(ten_counter)
     begin
-    -- mos_ints <= (
-    --             ten_counter,
-    --             ten_counter,
-    --             ten_counter,
-    --             ten_counter,
-    --             ten_counter,
-    --             ten_counter,
-    --             ten_counter,
-    --             ten_counter
-    --         );
+        mos_ints <= (
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter
+                );
     end process;
 
     the_mos_driver: mos_driver
@@ -287,38 +287,5 @@ begin
                 BTN_CLK => twenty_milo_second,
                 O => btn_pressed
             );
-
-    process(btn_pressed)
-    begin
-        if rising_edge(btn_pressed(1))then
-            if btn_pressed(1 downto 0) = "01" then
-                if bling_bit = 1 then
-                    bling_bit <= 8;
-                else
-                    bling_bit <= bling_bit - 1;
-                end if;
-            elsif btn_pressed(1 downto 0) = "10" then
-                if bling_bit = 8 then
-                    bling_bit <= 1;
-                else
-                    bling_bit <= bling_bit + 1;
-                end if;
-            end if;
-        end if;
-    end process;
-
-    process(bling_bit)
-    begin
-        mos_ints <= (
-                    bling_bit,
-                    bling_bit,
-                    bling_bit,
-                    bling_bit,
-                    bling_bit,
-                    bling_bit,
-                    bling_bit,
-                    bling_bit
-                );
-    end process;
 
 end Behavioral;

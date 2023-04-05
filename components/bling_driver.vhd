@@ -6,7 +6,8 @@ use ieee.std_logic_unsigned.all;
 entity bling_driver is
     port (
              bling_clk: in std_logic;
-             bling_bit: in integer;
+             -- 闪烁的位，1有效
+             bling_bit: in std_logic_vector(7 downto 0);
     D8, D7, D6, D5, D4, D3, D2, D1: in integer;
     DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
     OD8, OD7, OD6, OD5, OD4, OD3, OD2, OD1: out integer;
@@ -38,9 +39,9 @@ begin
         mos_dots(3) <= DOT3;
         mos_dots(2) <= DOT2;
         mos_dots(1) <= DOT1;
-        if bling_clk = '1' and bling_bit > 0 and bling_bit < 9 then
+        if bling_clk = '1' then
             for i in 1 to 8 loop
-                if bling_bit = i then
+                if bling_bit(i-1) = '1' then
                     mos_ints(i) <= 10;
                     mos_dots(i) <= '1';
                 end if;
