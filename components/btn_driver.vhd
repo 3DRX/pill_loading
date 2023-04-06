@@ -20,26 +20,6 @@ entity btn_driver is
 end entity btn_driver;
 
 architecture rtl of btn_driver is
-    signal out_temp: std_logic_vector(4 downto 0) := "00000";
-    signal s1_temp: std_logic := '0';
-    signal s2_temp: std_logic := '0';
 begin
-    process(S1)
-    begin
-        if falling_edge(S1) then
-            out_temp(0) <= '1';
-        elsif rising_edge(S1) then
-            out_temp(0) <= '0';
-        end if;
-    end process;
-
-    process(S2)
-    begin
-        if falling_edge(S2) then
-            out_temp(1) <= '1';
-        elsif rising_edge(S2) then
-            out_temp(1) <= '0';
-        end if;
-    end process;
-    O <= out_temp;
+    O <= S5 & S4 & S3 & S2 & S1;
 end architecture rtl;

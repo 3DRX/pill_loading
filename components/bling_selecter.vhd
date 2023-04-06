@@ -44,7 +44,8 @@ begin
             else
                 selected_bit <= selected_bit + 1;
             end if;
-        elsif rising_edge(pressed_btn(0)) then
+        end if;
+        if rising_edge(pressed_btn(0)) then
             if selected_bit = 0 then
                 selected_bit <= 7;
             else
