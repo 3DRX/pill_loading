@@ -29,10 +29,11 @@ begin
             );
     stimulus:
     process begin
-        s1 <= '1';
+        s1 <= '0';
         s2 <= '0';
         start <= '0';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
+        s1 <= '1';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
         s1 <= '0';
@@ -56,16 +57,20 @@ begin
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
+        s2 <= '1';
+        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
+        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
+        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
+        s2 <= '0';
+        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
+        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
+        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
+        s2 <= '1';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
-        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
-        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
-        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
-        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
-        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
-        wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
+        s2 <= '0';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
         wait for 10 ns; clk <= '0'; wait for 1 ns; clk <= '1'; wait for 1 ns; clk <= '0';
