@@ -12,7 +12,6 @@ entity main is
             S3: in std_logic;
             S4: in std_logic;
             S5: in std_logic;
-            S6: in std_logic;
             OUTNUM: out std_logic_vector(7 downto 0);
             SELNUM: out std_logic_vector(7 downto 0)
         );
@@ -25,7 +24,6 @@ architecture Behavioral of main is
     signal OS3: std_logic;
     signal OS4: std_logic;
     signal OS5: std_logic;
-    signal OS6: std_logic;
     -- 输入数字
     signal ipt_num: integer range 0 to 9;
     -- 分频后的时钟
@@ -43,9 +41,15 @@ architecture Behavioral of main is
     signal o_mos_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
     signal o_mos_dots: dots := ('1', '1', '1', '1', '1', '1', '1', '1');
     -- 正在闪烁的位，1有效
-    signal bling_bit: std_logic_vector(7 downto 0) := "00000001";
-    -- 正在被按下的按钮
-    signal btn_pressed: std_logic_vector(5 downto 0) := "000000";
+    signal bling_bit: std_logic_vector(7 downto 0) := "00000000";
+    component bling_selecter
+        port (
+                 S1: in std_logic;          -- 右按钮
+                 S2: in std_logic;          -- 左按钮
+                 START: in std_logic;       -- 开始信号，1有效
+                 BLING_BIT: out std_logic_vector(7 downto 0)
+             );
+    end component;
     component matrix_input
         port(
                 CLK:in std_logic;
@@ -80,18 +84,6 @@ architecture Behavioral of main is
                 O: out integer;
                 C: out std_logic
             );
-    end component;
-    component btn_driver
-        port (
-                 S1: in std_logic;
-                 S2: in std_logic;
-                 S3: in std_logic;
-                 S4: in std_logic;
-                 S5: in std_logic;
-                 S6: in std_logic;
-                 BTN_CLK: in std_logic;
-                 O: out std_logic_vector(5 downto 0)
-             );
     end component;
     component bling_driver
         port (
@@ -145,13 +137,6 @@ begin
                 key_out => OS5
             );
 
-    key_debounce6: key_debounce
-    port map(
-                clk => CLK,
-                key => S6,
-                key_out => OS6
-            );
-
     -- 时钟分频成秒
     divide_second: divider
     port map(
@@ -177,6 +162,14 @@ begin
                 O => bling_clk
             );
 
+    the_bling_selecter: bling_selecter
+    port map(
+                S1 => OS1,
+                S2 => OS2,
+                START => '0',
+                BLING_BIT => bling_bit
+            );
+
     divide_mos_refresh: divider
     port map(
                 CLK => CLK,
@@ -194,28 +187,28 @@ begin
     --             seg_num => output_mos
     --         );
 
-    the_counter: counter
-    port map(
-                CLK => one_second,
-                RST => RST,
-                N => 10,
-                O => ten_counter,
-                C => open
-            );
+    -- the_counter: counter
+    -- port map(
+    --             CLK => one_second,
+    --             RST => RST,
+    --             N => 10,
+    --             O => ten_counter,
+    --             C => open
+    --         );
 
-    process(ten_counter)
-    begin
-        mos_ints <= (
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter
-                );
-    end process;
+    -- process(ten_counter)
+    -- begin
+    --     mos_ints <= (
+    --                 ten_counter,
+    --                 ten_counter,
+    --                 ten_counter,
+    --                 ten_counter,
+    --                 ten_counter,
+    --                 ten_counter,
+    --                 ten_counter,
+    --                 ten_counter
+    --             );
+    -- end process;
 
     the_mos_driver: mos_driver
     port map(
@@ -276,18 +269,6 @@ begin
                 ODOT3 => o_mos_dots(3),
                 ODOT2 => o_mos_dots(2),
                 ODOT1 => o_mos_dots(1)
-            );
-
-    the_btn_driver: btn_driver
-    port map(
-                S1 => OS1,
-                S2 => OS2,
-                S3 => OS3,
-                S4 => OS4,
-                S5 => OS5,
-                S6 => OS6,
-                BTN_CLK => twenty_milo_second,
-                O => btn_pressed
             );
 
 end Behavioral;

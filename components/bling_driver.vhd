@@ -1,7 +1,6 @@
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use ieee.std_logic_arith.all;
-use ieee.std_logic_unsigned.all;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
 
 entity bling_driver is
     port (
@@ -20,8 +19,22 @@ architecture rtl of bling_driver is
     type dots is array (1 to 8) of std_logic;
     signal mos_ints: ints := (D1, D2, D3, D4, D5, D6, D7, D8);
     signal mos_dots: dots := (DOT1, DOT2, DOT3, DOT4, DOT5, DOT6, DOT7, DOT8);
+    signal show: integer := 1;
 begin
     process(bling_clk)
+    begin
+        if bling_clk'event and bling_clk = '1' then
+            if show = 1 then
+                show <= 0;
+            elsif show = 0 then
+                show <= 1;
+            else
+                show <= 1;
+            end if;
+        end if;
+    end process;
+
+    process(show)
     begin
         mos_ints(8) <= D8;
         mos_ints(7) <= D7;
@@ -39,7 +52,7 @@ begin
         mos_dots(3) <= DOT3;
         mos_dots(2) <= DOT2;
         mos_dots(1) <= DOT1;
-        if bling_clk = '1' then
+        if show = 0 then
             for i in 1 to 8 loop
                 if bling_bit(i-1) = '1' then
                     mos_ints(i) <= 10;
