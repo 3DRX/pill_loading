@@ -1,11 +1,11 @@
 GHDL=ghdl
 FLAGS="--std=08"
-NAME="bling_selecter"
+NAME="key_debounce"
 
 all:
-	$(GHDL) -a $(FLAGS) $(NAME)_tb.vhd $(NAME).vhd btn_driver.vhd
+	$(GHDL) -a $(FLAGS) $(NAME)_tb.vhd $(NAME).vhd
 	$(GHDL) -e $(FLAGS) $(NAME)_tb
-	$(GHDL) -r $(FLAGS) $(NAME)_tb --wave=wave.ghw --stop-time=1us
+	$(GHDL) -r $(FLAGS) $(NAME)_tb --wave=wave.ghw --stop-time=1ms
 
 clean:
 	rm *.cf *.ghw

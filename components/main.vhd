@@ -28,9 +28,9 @@ architecture Behavioral of main is
     signal ipt_num: integer range 0 to 9;
     -- 分频后的时钟
     signal one_second: std_logic := '0';
-    signal twenty_milo_second: std_logic := '0';
     signal mos_refresh_clk: std_logic := '0';
     signal bling_clk: std_logic := '0';
+    signal debounce_clk: std_logic := '0';
     -- 计数器输出
     signal ten_counter: integer := 0;
     -- 数码管显示输出
@@ -104,35 +104,35 @@ architecture Behavioral of main is
 begin
     key_debounce1: key_debounce
     port map(
-                clk => CLK,
+                clk => debounce_clk,
                 key => S1,
                 key_out => OS1
             );
 
     key_debounce2: key_debounce
     port map(
-                clk => CLK,
+                clk => debounce_clk,
                 key => S2,
                 key_out => OS2
             );
 
     key_debounce3: key_debounce
     port map(
-                clk => CLK,
+                clk => debounce_clk,
                 key => S3,
                 key_out => OS3
             );
 
     key_debounce4: key_debounce
     port map(
-                clk => CLK,
+                clk => debounce_clk,
                 key => S4,
                 key_out => OS4
             );
 
     key_debounce5: key_debounce
     port map(
-                clk => CLK,
+                clk => debounce_clk,
                 key => S5,
                 key_out => OS5
             );
@@ -146,14 +146,6 @@ begin
                 O => one_second
             );
 
-    divide_btn: divider
-    port map(
-                CLK => CLK,
-                RST => RST,
-                N => 2000000,
-                O => twenty_milo_second
-            );
-
     divide_bling: divider
     port map(
                 CLK => CLK,
@@ -162,12 +154,12 @@ begin
                 O => bling_clk
             );
 
-    the_bling_selecter: bling_selecter
+    divide_debounce: divider
     port map(
-                S1 => OS1,
-                S2 => OS2,
-                START => '0',
-                BLING_BIT => bling_bit
+                CLK => CLK,
+                RST => RST,
+                N => 250000,
+                O => debounce_clk
             );
 
     divide_mos_refresh: divider
@@ -209,6 +201,14 @@ begin
     --                 ten_counter
     --             );
     -- end process;
+
+    the_bling_selecter: bling_selecter
+    port map(
+                S1 => OS1,
+                S2 => OS2,
+                START => '0',
+                BLING_BIT => bling_bit
+            );
 
     the_mos_driver: mos_driver
     port map(

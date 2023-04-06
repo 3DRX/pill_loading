@@ -1,19 +1,19 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.std_logic_unsigned.all;
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
 entity key_debounce is
     port(
     clk,key: in std_logic;
     key_out: out std_logic
 );
 end key_debounce;
+
 architecture behav of key_debounce is
     signal counter:integer range 0 to 50000000;
     signal df_1,df_2,df,rst_n:std_logic;
     constant timer:integer:=5000;
 begin
-
-
     process(clk)
     begin
         if clk'event and clk='1' then
