@@ -25,15 +25,13 @@ begin
     process(left_right)
     begin
         if left_right'event and left_right = '1' then
-            if S1 = '0' and S2 = '1' then
-                selected_bit <= selected_bit + 1;
-            elsif S1 = '1' and S2 = '0' then
-                if selected_bit = 0 then
-                    selected_bit <= 7;
-                else
+            case S1 is
+                when '0' =>
+                    selected_bit <= selected_bit + 1;
+                when '1' =>
                     selected_bit <= selected_bit - 1;
-                end if;
-            end if;
+                when others =>
+            end case;
         end if;
     end process;
 
