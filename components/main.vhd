@@ -47,6 +47,7 @@ architecture Behavioral of main is
                  S1: in std_logic;          -- 右按钮
                  S2: in std_logic;          -- 左按钮
                  START: in std_logic;       -- 开始信号，1有效
+                 btn_refresh_clk: in std_logic;
                  BLING_BIT: out std_logic_vector(7 downto 0)
              );
     end component;
@@ -204,9 +205,10 @@ begin
 
     the_bling_selecter: bling_selecter
     port map(
-                S1 => OS1,
-                S2 => OS2,
+                S1 => S1,
+                S2 => S2,
                 START => '0',
+                btn_refresh_clk => debounce_clk,
                 BLING_BIT => bling_bit
             );
 
