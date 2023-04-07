@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity main is
     port(
             CLK: in std_logic;
-            RST: in std_logic;
+            START: in std_logic;
             kcol:in std_logic_vector(3 downto 0);
             krow:out std_logic_vector(3 downto 0);
             S1: in std_logic;
@@ -38,9 +38,9 @@ architecture Behavioral of main is
     type ints is array (1 to 8) of integer;
     type dots is array (1 to 8) of std_logic;
     signal mos_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
-    signal mos_dots: dots := ('1', '1', '1', '1', '1', '1', '1', '1');
+    signal mos_dots: dots := ('1', '1', '0', '1', '0', '1', '1', '1');
     signal o_mos_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
-    signal o_mos_dots: dots := ('1', '1', '1', '1', '1', '1', '1', '1');
+    signal o_mos_dots: dots := ('1', '1', '0', '1', '0', '1', '1', '1');
     -- 正在闪烁的位，1有效
     signal bling_bit: std_logic_vector(7 downto 0) := "00000000";
     component bling_selecter
@@ -150,7 +150,7 @@ begin
     divide_second: divider
     port map(
                 CLK => CLK,
-                RST => RST,
+                RST => '0',
                 N => 100000000,
                 O => one_second
             );
@@ -158,7 +158,7 @@ begin
     divide_bling: divider
     port map(
                 CLK => CLK,
-                RST => RST,
+                RST => '0',
                 N => 50000000,
                 O => bling_clk
             );
@@ -166,7 +166,7 @@ begin
     divide_debounce: divider
     port map(
                 CLK => CLK,
-                RST => RST,
+                RST => '0',
                 N => 500000,
                 O => debounce_clk
             );
@@ -174,7 +174,7 @@ begin
     divide_mos_refresh: divider
     port map(
                 CLK => CLK,
-                RST => RST,
+                RST => '0',
                 N => 100000,
                 O => mos_refresh_clk
             );
@@ -182,40 +182,40 @@ begin
     -- the_matrix_input: matrix_input
     -- port map(
     --             CLK => CLK,
-    --             CLR => RST,
+    --             CLR => START,
     --             kcol => kcol,
     --             krow => krow,
     --             seg_num => output_mos
     --         );
 
-    -- the_counter: counter
-    -- port map(
-    --             CLK => one_second,
-    --             RST => RST,
-    --             N => 10,
-    --             O => ten_counter,
-    --             C => open
-    --         );
+    the_counter: counter
+    port map(
+                CLK => one_second,
+                RST => not START,
+                N => 10,
+                O => ten_counter,
+                C => open
+            );
 
-    -- process(ten_counter)
-    -- begin
-    --     mos_ints <= (
-    --                 ten_counter,
-    --                 ten_counter,
-    --                 ten_counter,
-    --                 ten_counter,
-    --                 ten_counter,
-    --                 ten_counter,
-    --                 ten_counter,
-    --                 ten_counter
-    --             );
-    -- end process;
+    process(ten_counter)
+    begin
+        mos_ints <= (
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter,
+                    ten_counter
+                );
+    end process;
 
     the_bling_selecter: bling_selecter
     port map(
                 S1 => OS1,
                 S2 => OS2,
-                START => RST,
+                START => START,
                 BLING_BIT => bling_bit
             );
 

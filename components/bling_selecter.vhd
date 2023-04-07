@@ -14,7 +14,7 @@ end entity bling_selecter;
 architecture behav of bling_selecter is
     signal pressed_btn: std_logic_vector(4 downto 0) := "00000";
     signal bling_bit_temp: std_logic_vector(7 downto 0) := "00000001";
-    signal selected_bit: integer range 0 to 7 := 0;
+    signal selected_bit: integer range 0 to 6 := 0;
     signal left_right: std_logic := '0';
 begin
     process(S1, S2)
@@ -35,7 +35,7 @@ begin
         end if;
     end process;
 
-    process(selected_bit)
+    process(selected_bit, START)
     begin
         bling_bit_temp <= "00000000";
         if START = '0' then
