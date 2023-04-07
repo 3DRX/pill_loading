@@ -2,6 +2,7 @@
 *.cf
 *.ghw
 pill_loading.cache
+.hdl_checker
 
 #########################################################################################
 ##  Project    : Collect of various scripts for working with EDA-tools (ASIC/FPGA/etc) ##
