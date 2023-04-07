@@ -13,7 +13,8 @@ entity main is
             S4: in std_logic;
             S5: in std_logic;
             OUTNUM: out std_logic_vector(7 downto 0);
-            SELNUM: out std_logic_vector(7 downto 0)
+            SELNUM: out std_logic_vector(7 downto 0);
+            TEST: out std_logic
         );
 end entity main;
 
@@ -47,7 +48,6 @@ architecture Behavioral of main is
                  S1: in std_logic;          -- 右按钮
                  S2: in std_logic;          -- 左按钮
                  START: in std_logic;       -- 开始信号，1有效
-                 btn_refresh_clk: in std_logic;
                  BLING_BIT: out std_logic_vector(7 downto 0)
              );
     end component;
@@ -96,46 +96,54 @@ architecture Behavioral of main is
         ODOT8, ODOT7, ODOT6, ODOT5, ODOT4, ODOT3, ODOT2, ODOT1: out std_logic
     );
     end component;
-    component key_debounce
+    component DeBounce
         port(
-        clk,key: in std_logic;
-        key_out: out std_logic
-    );
+                Clock : in std_logic;
+                Reset : in std_logic;
+                button_in : in std_logic;
+                pulse_out : out std_logic
+            );
     end component;
 begin
-    key_debounce1: key_debounce
+
+    BTN1: DeBounce
     port map(
-                clk => debounce_clk,
-                key => S1,
-                key_out => OS1
+                Clock => debounce_clk,
+                Reset => '0',
+                button_in => S1,
+                pulse_out => OS1
             );
 
-    key_debounce2: key_debounce
+    BTN2: DeBounce
     port map(
-                clk => debounce_clk,
-                key => S2,
-                key_out => OS2
+                Clock => debounce_clk,
+                Reset => '0',
+                button_in => S2,
+                pulse_out => OS2
             );
 
-    key_debounce3: key_debounce
+    BTN3: DeBounce
     port map(
-                clk => debounce_clk,
-                key => S3,
-                key_out => OS3
+                Clock => debounce_clk,
+                Reset => '0',
+                button_in => S3,
+                pulse_out => OS3
             );
 
-    key_debounce4: key_debounce
+    BTN4: DeBounce
     port map(
-                clk => debounce_clk,
-                key => S4,
-                key_out => OS4
+                Clock => debounce_clk,
+                Reset => '0',
+                button_in => S4,
+                pulse_out => OS4
             );
 
-    key_debounce5: key_debounce
+    BTN5: DeBounce
     port map(
-                clk => debounce_clk,
-                key => S5,
-                key_out => OS5
+                Clock => debounce_clk,
+                Reset => '0',
+                button_in => S5,
+                pulse_out => TEST
             );
 
     -- 时钟分频成秒
@@ -159,7 +167,7 @@ begin
     port map(
                 CLK => CLK,
                 RST => RST,
-                N => 250000,
+                N => 500000,
                 O => debounce_clk
             );
 
@@ -205,10 +213,9 @@ begin
 
     the_bling_selecter: bling_selecter
     port map(
-                S1 => S1,
-                S2 => S2,
-                START => '0',
-                btn_refresh_clk => debounce_clk,
+                S1 => OS1,
+                S2 => OS2,
+                START => RST,
                 BLING_BIT => bling_bit
             );
 

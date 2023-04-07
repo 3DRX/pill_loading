@@ -80,3 +80,6 @@ set_property PACKAGE_PIN P1 [get_ports S2]
 set_property PACKAGE_PIN P5 [get_ports S3]
 set_property PACKAGE_PIN P4 [get_ports S4]
 set_property PACKAGE_PIN P2 [get_ports S5]
+
+set_property IOSTANDARD LVCMOS33 [get_ports TEST]
+set_property PACKAGE_PIN K17 [get_ports TEST]

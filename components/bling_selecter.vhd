@@ -7,7 +7,6 @@ entity bling_selecter is
              S1: in std_logic;          -- 右按钮
              S2: in std_logic;          -- 左按钮
              START: in std_logic;       -- 开始信号，1有效
-             btn_refresh_clk: in std_logic;
              BLING_BIT: out std_logic_vector(7 downto 0)
          );
 end entity bling_selecter;
@@ -29,7 +28,11 @@ begin
             if S1 = '0' and S2 = '1' then
                 selected_bit <= selected_bit + 1;
             elsif S1 = '1' and S2 = '0' then
-                selected_bit <= selected_bit - 1;
+                if selected_bit = 0 then
+                    selected_bit <= 7;
+                else
+                    selected_bit <= selected_bit - 1;
+                end if;
             end if;
         end if;
     end process;
