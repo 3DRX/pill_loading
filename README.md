@@ -4,6 +4,26 @@
 >
 > https://github.com/3DRX/pill_loading
 
+<!--toc:start-->
+- [基于 Xilinx FPGA 的药片装瓶系统](#基于-xilinx-fpga-的药片装瓶系统)
+  - [开发环境](#开发环境)
+    - [流程](#流程)
+      - [仿真](#仿真)
+      - [编译](#编译)
+  - [设计内容](#设计内容)
+    - [功能概述](#功能概述)
+    - [结合开发板硬件资源的实现](#结合开发板硬件资源的实现)
+  - [实现细节](#实现细节)
+    - [编码风格](#编码风格)
+    - [代码结构](#代码结构)
+    - [模块划分](#模块划分)
+      - [工具类模块](#工具类模块)
+      - [驱动器](#驱动器)
+      - [逻辑控制器](#逻辑控制器)
+      - [主模块`main.vhd`](#主模块mainvhd)
+  - [总结](#总结)
+<!--toc:end-->
+
 ## 开发环境
 
 - Ubuntu 22.04 LTS
@@ -11,6 +31,29 @@
 - GHDL 1.0.0 (Ubuntu 1.0.0+dfsg-6) [Dunoon edition]
 - GTKWave
 - Minisys 开发板，搭载 Xilinx Artix-7（XC7A100T FGG484C-1）
+
+### 流程
+
+#### 仿真
+
+`./components/` 文件夹中以 `*_tb.vhd` 结尾的文件是测试文件，
+由于编译速度，平台兼容性等原因，测试通过开源工具 GHDL 与 GTKWave 进行。
+
+其中`./components/Makefile` 是运行测试的编译文件。
+将 Makefile 中 NAME 改为要测试的文件名，再修改相关编译指令参数，
+运行 `make` 即可生成 `wave.ghw` 文件。
+使用 GTKWave 打开 `wave.ghw`，即可看到模拟仿真波形。
+
+#### 编译
+
+常规的 Vivado 项目 Synthesis => Implementation => Generate Bit Stream 流程。
+
+对编译速度进行优化如下：
+- 在 Vivado 安装目录下 `./scripts/` 文件夹中添加 `Vivado_init.tcl` 文件，并写入：
+`set_param general.maxThreads 32` 即可使 Vivado 在编译时使用能利用的最多线程。
+- 将 `/` 目录下 `/swapfile` 文件扩容至 16G（与内存大小相同）。
+- 在 Vivado 项目设置中选择 Run Strategy 为 `Flow_RuntimeOptimized (Vivado Synthesis 2022)`
+和 `Flow_Quick (Vivado Implementation 2022)`，即为牺牲优化性能换取更快编译速度的策略。
 
 ## 设计内容
 
