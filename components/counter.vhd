@@ -24,18 +24,21 @@ architecture behav of counter is
 begin
     process(CLK, RST)
     begin
-        if RST = '1' then
-            temp <= 0;
-            Ctemp <= '0';
-        elsif CLK'event and CLK = '1' then
-            if temp = N - 1 then
-                Ctemp <= '1';
+        case RST is
+            when '1' =>
                 temp <= 0;
-            else
                 Ctemp <= '0';
-                temp <= temp + 1;
-            end if;
-        end if;
+            when others =>
+                if CLK'event and CLK = '1' then
+                    if temp = N - 1 then
+                        Ctemp <= '1';
+                        temp <= 0;
+                    else
+                        Ctemp <= '0';
+                        temp <= temp + 1;
+                    end if;
+                end if;
+        end case;
     end process;
     C <= Ctemp;
     O <= temp;

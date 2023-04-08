@@ -11,6 +11,8 @@ entity set_num_controller is
              S4: in std_logic;
              kcol:in std_logic_vector(3 downto 0);
              krow:out std_logic_vector(3 downto 0);
+             PILL_MAX: out integer;
+             BOTTLE_MAX: out integer;
              BLING_BIT: out std_logic_vector(7 downto 0);
              SET_INTS: out integer_vector(7 downto 0)
          );
@@ -20,6 +22,8 @@ architecture behav of set_num_controller is
     signal t_set_ints: integer_vector(7 downto 0) := (others => 0);
     signal t_bling_bit: std_logic_vector(7 downto 0);
     signal matrix_num: integer;
+    signal t_pill_max: integer := 50;
+    signal t_bottle_max: integer := 18;
     component matrix_input
         port(
                 CLK:in std_logic;
@@ -72,6 +76,28 @@ begin
         end if;
     end process;
 
+    process(S4)
+        variable v_pill_max: integer := 50;
+        variable v_bottle_max: integer := 18;
+    begin
+        if S4'event and S4 ='1' then
+            v_pill_max := t_set_ints(1) * 10 + t_set_ints(0);
+            v_bottle_max := t_set_ints(3) * 10 + t_set_ints(2);
+            if v_pill_max > 0 and v_pill_max < 50 then
+                t_pill_max <= v_pill_max;
+            else
+                t_pill_max <= 50;
+            end if;
+            if v_bottle_max > 0 and v_bottle_max < 18 then
+                t_bottle_max <= v_bottle_max;
+            else
+                t_bottle_max <= 18;
+            end if;
+        end if;
+    end process;
+
     SET_INTS <= t_set_ints;
     BLING_BIT <= t_bling_bit;
+    PILL_MAX <= t_pill_max;
+    BOTTLE_MAX <= t_bottle_max;
 end architecture behav;

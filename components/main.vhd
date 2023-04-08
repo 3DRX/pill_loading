@@ -48,6 +48,9 @@ architecture Behavioral of main is
     signal bling_bit: std_logic_vector(7 downto 0);
     -- 键盘输入值
     signal matrix_num: integer := 0;
+    -- 当前设定的最大值
+    signal t_pill_max: integer;
+    signal t_bottle_max: integer;
     component mos_driver
         port(
                 INTS: in integer_vector(7 downto 0);
@@ -110,11 +113,31 @@ architecture Behavioral of main is
                  S4: in std_logic;
                  kcol:in std_logic_vector(3 downto 0);
                  krow:out std_logic_vector(3 downto 0);
+                 PILL_MAX: out integer;
+                 BOTTLE_MAX: out integer;
                  BLING_BIT: out std_logic_vector(7 downto 0);
                  SET_INTS: out integer_vector(7 downto 0)
              );
     end component;
+    component count_pill_controller
+        port (
+                 CLK: in std_logic; -- 10MHz
+                 START: in std_logic;       -- 1有效
+                 PILL_MAX: in integer;      -- 每瓶最大药片数
+                 BOTTLE_MAX: in integer;    -- 最大瓶数
+                 COUNT_INTS: out integer_vector(7 downto 0)
+             );
+    end component;
 begin
+    the_count_pill_controller: count_pill_controller
+    port map(
+                CLK => CLK,
+                START => START,
+                PILL_MAX => t_pill_max,
+                BOTTLE_MAX => t_bottle_max,
+                COUNT_INTS => count_ints
+            );
+
     the_set_num_controller: set_num_controller
     port map(
                 CLK => CLK,
@@ -124,6 +147,8 @@ begin
                 S4 => OS4,
                 kcol => kcol,
                 krow => krow,
+                PILL_MAX => t_pill_max,
+                BOTTLE_MAX => t_bottle_max,
                 BLING_BIT => bling_bit,
                 SET_INTS => set_ints
             );
@@ -209,21 +234,14 @@ begin
                 MOS_INTS => mos_ints
             );
 
-    the_counter: counter
-    port map(
-                CLK => one_second,
-                RST => not START,
-                N => 10,
-                O => ten_counter,
-                C => open
-            );
-
-    process(ten_counter)
-    begin
-        if START = '1' then
-            count_ints <= (others => ten_counter);
-        end if;
-    end process;
+    -- the_counter: counter
+    -- port map(
+    --             CLK => one_second,
+    --             RST => not START,
+    --             N => 10,
+    --             O => ten_counter,
+    --             C => open
+    --         );
 
     the_mos_driver: mos_driver
     port map(
