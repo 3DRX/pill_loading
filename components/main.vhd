@@ -45,26 +45,9 @@ architecture Behavioral of main is
     signal o_mos_ints: integer_vector(7 downto 0) := (others => 0);
     signal o_mos_dots: std_logic_vector(7 downto 0) := (others => '0');
     -- 正在闪烁的位，1有效
-    signal bling_bit: std_logic_vector(7 downto 0) := "00000000";
+    signal bling_bit: std_logic_vector(7 downto 0);
     -- 键盘输入值
     signal matrix_num: integer := 0;
-    component bling_selecter
-        port (
-                 S1: in std_logic;          -- 右按钮
-                 S2: in std_logic;          -- 左按钮
-                 START: in std_logic;       -- 开始信号，1有效
-                 BLING_BIT: out std_logic_vector(7 downto 0)
-             );
-    end component;
-    component matrix_input
-        port(
-                CLK:in std_logic;
-                CLR:in std_logic;
-                kcol:in std_logic_vector(3 downto 0);
-                krow:out std_logic_vector(3 downto 0);
-                seg_num:out integer
-            );
-    end component;
     component mos_driver
         port(
                 INTS: in integer_vector(7 downto 0);
@@ -118,7 +101,32 @@ architecture Behavioral of main is
                  MOS_INTS: out integer_vector(7 downto 0)
              );
     end component;
+    component set_num_controller
+        port (
+                 CLK: in std_logic; -- 100MHz
+                 START: in std_logic;
+                 S1: in std_logic;
+                 S2: in std_logic;
+                 S4: in std_logic;
+                 kcol:in std_logic_vector(3 downto 0);
+                 krow:out std_logic_vector(3 downto 0);
+                 BLING_BIT: out std_logic_vector(7 downto 0);
+                 SET_INTS: out integer_vector(7 downto 0)
+             );
+    end component;
 begin
+    the_set_num_controller: set_num_controller
+    port map(
+                CLK => CLK,
+                START => START,
+                S1 => OS1,
+                S2 => OS2,
+                S4 => OS4,
+                kcol => kcol,
+                krow => krow,
+                BLING_BIT => bling_bit,
+                SET_INTS => set_ints
+            );
 
     BTN1: DeBounce
     port map(
@@ -193,39 +201,13 @@ begin
                 O => mos_refresh_clk
             );
 
-    -- the_ints_switcher: ints_switcher
-    -- port map(
-    --             START => START,
-    --             COUNT_INTS => count_ints,
-    --             SET_INTS => set_ints,
-    --             MOS_INTS => mos_ints
-    --         );
-
-    -- the_matrix_input: matrix_input
-    -- port map(
-    --             CLK => CLK,
-    --             CLR => START,
-    --             kcol => kcol,
-    --             krow => krow,
-    --             seg_num => matrix_num
-    --         );
-
-    -- process(matrix_num, START, bling_bit)
-    -- begin
-    --     if START = '0' then
-    --         case bling_bit is
-    --             when "00001000" =>
-    --                 set_ints(3) <= matrix_num;
-    --             when "00000100" =>
-    --                 set_ints(2) <= matrix_num;
-    --             when "00000010" =>
-    --                 set_ints(1) <= matrix_num;
-    --             when "00000001" =>
-    --                 set_ints(0) <= matrix_num;
-    --             when others =>
-    --         end case;
-    --     end if;
-    -- end process;
+    the_ints_switcher: ints_switcher
+    port map(
+                START => START,
+                COUNT_INTS => count_ints,
+                SET_INTS => set_ints,
+                MOS_INTS => mos_ints
+            );
 
     the_counter: counter
     port map(
@@ -239,26 +221,9 @@ begin
     process(ten_counter)
     begin
         if START = '1' then
-            mos_ints <= (
-                        ten_counter,
-                        ten_counter,
-                        ten_counter,
-                        ten_counter,
-                        ten_counter,
-                        ten_counter,
-                        ten_counter,
-                        ten_counter
-                    );
+            count_ints <= (others => ten_counter);
         end if;
     end process;
-
-    the_bling_selecter: bling_selecter
-    port map(
-                S1 => OS1,
-                S2 => OS2,
-                START => START,
-                BLING_BIT => bling_bit
-            );
 
     the_mos_driver: mos_driver
     port map(
