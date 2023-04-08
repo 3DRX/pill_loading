@@ -4,9 +4,9 @@ use IEEE.numeric_std.all;
 
 entity buzz_controller is
     port (
-             CLK: in std_logic; -- 100MHz
-             START: in std_logic;
-             BUZZ_OUT: out std_logic
+             CLK: in std_logic;      -- 100MHz 时钟
+             START: in std_logic;    -- 使能信号
+             BUZZ_OUT: out std_logic -- 输出到蜂鸣器的脉冲
          );
 end entity buzz_controller;
 

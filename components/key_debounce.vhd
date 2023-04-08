@@ -4,10 +4,10 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity DeBounce is
     port(
-            Clock : in std_logic;
-            Reset : in std_logic;
-            button_in : in std_logic;
-            pulse_out : out std_logic
+            Clock : in std_logic;     -- Clock: 时钟
+            Reset : in std_logic;     -- Reset: 清零
+            button_in : in std_logic; -- button_in: 输入原始信号
+            pulse_out : out std_logic -- pulse_out: 输出消抖后信号
         );
 end DeBounce;
 

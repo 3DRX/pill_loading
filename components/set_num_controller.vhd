@@ -4,17 +4,17 @@ use IEEE.numeric_std.all;
 
 entity set_num_controller is
     port (
-             CLK: in std_logic; -- 100MHz
-             START: in std_logic;
-             S1: in std_logic;
-             S2: in std_logic;
-             S4: in std_logic;
-             kcol:in std_logic_vector(3 downto 0);
-             krow:out std_logic_vector(3 downto 0);
-             PILL_MAX: out integer;
-             BOTTLE_MAX: out integer;
-             BLING_BIT: out std_logic_vector(7 downto 0);
-             SET_INTS: out integer_vector(7 downto 0)
+             CLK: in std_logic;                          -- 100MHz 时钟
+             START: in std_logic;                        -- 1 有效
+             S1: in std_logic;                           -- 右按钮
+             S2: in std_logic;                           -- 左按钮
+             S4: in std_logic;                           -- 确认按钮
+             kcol:in std_logic_vector(3 downto 0);       -- 矩阵键盘信号
+             krow:out std_logic_vector(3 downto 0);      -- 矩阵键盘信号
+             PILL_MAX: out integer;                      -- 每瓶最大药片数
+             BOTTLE_MAX: out integer;                    -- 最大瓶数
+             BLING_BIT: out std_logic_vector(7 downto 0); -- 正在闪烁的位
+             SET_INTS: out integer_vector(7 downto 0)    -- 输出显示缓冲
          );
 end entity set_num_controller;
 

@@ -4,13 +4,12 @@ use IEEE.numeric_std.all;
 
 entity bling_driver is
     port (
-             bling_clk: in std_logic;
-             -- 闪烁的位，1有效
-             bling_bit: in std_logic_vector(7 downto 0);
-             MOS_INTS: in integer_vector(7 downto 0);
-             MOS_DOTS: in std_logic_vector(7 downto 0);
-             O_MOS_INTS: out integer_vector(7 downto 0);
-             O_MOS_DOTS: out std_logic_vector(7 downto 0)
+             bling_clk: in std_logic;                     -- 时钟
+             bling_bit: in std_logic_vector(7 downto 0);  -- 闪烁的位，1有效
+             MOS_INTS: in integer_vector(7 downto 0);     -- 数字原始信号
+             MOS_DOTS: in std_logic_vector(7 downto 0);   -- 小数点原始信号
+             O_MOS_INTS: out integer_vector(7 downto 0);  -- 数字输出信号
+             O_MOS_DOTS: out std_logic_vector(7 downto 0) -- 小数点输出信号
          );
 end entity bling_driver;
 

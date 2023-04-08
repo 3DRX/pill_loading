@@ -1,16 +1,13 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- 0 < D < 9
--- D = 10 清零
--- DOT 小数点，'1' 不亮，'0' 亮
 entity mos_driver is
     port(
-            INTS: in integer_vector(7 downto 0);
-            DOTS: in std_logic_vector(7 downto 0);
-            CLK: in std_logic;
-            OUTNUM: out std_logic_vector(7 downto 0);
-            SELNUM: out std_logic_vector(7 downto 0)
+            INTS: in integer_vector(7 downto 0);      -- 数字，为10清零
+            DOTS: in std_logic_vector(7 downto 0);    -- 小数点，'1' 不亮，'0' 亮
+            CLK: in std_logic;                        -- 时钟
+            OUTNUM: out std_logic_vector(7 downto 0); -- 输出数码管显示信号
+            SELNUM: out std_logic_vector(7 downto 0)  -- 输出数码管数位选择信号
         );
 end mos_driver;
 

@@ -4,12 +4,12 @@ use IEEE.numeric_std.all;
 
 entity count_pill_controller is
     port (
-             CLK: in std_logic; -- 100MHz
-             START: in std_logic;       -- 1有效
-             PILL_MAX: in integer;      -- 每瓶最大药片数
-             BOTTLE_MAX: in integer;    -- 最大瓶数
-             COUNT_INTS: out integer_vector(7 downto 0);
-             BUZZ: out std_logic
+             CLK: in std_logic;                          -- 100MHz
+             START: in std_logic;                        -- 1有效
+             PILL_MAX: in integer;                       -- 每瓶最大药片数
+             BOTTLE_MAX: in integer;                     -- 最大瓶数
+             COUNT_INTS: out integer_vector(7 downto 0); -- 输出显示缓冲
+             BUZZ: out std_logic                         -- 输出蜂鸣器使能
          );
 end entity count_pill_controller;
 

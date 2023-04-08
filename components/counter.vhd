@@ -1,20 +1,14 @@
--- 通用计数器
--- N: 输入最大值
--- O: 输出计数值 [0, N-1] 闭区间
--- CLK: 时钟
--- RST: 清零
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity counter is
     port(
-            CLK: in std_logic;
-            RST: in std_logic;
-            N: in integer;
-            O: out integer;
-            C: out std_logic
+            CLK: in std_logic; -- CLK: 时钟
+            RST: in std_logic; -- RST: 清零
+            N: in integer;     -- N: 输入最大值
+            O: out integer;    -- O: 输出计数值 [0, N-1] 闭区间
+            C: out std_logic   -- C: 进位输出
         );
 end entity counter;
 

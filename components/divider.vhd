@@ -1,20 +1,13 @@
--- 通用分频器
--- CLK: 时钟
--- RST: 清零
--- N: 源周期/输出周期（N=2时，2分频）
--- O: 输出时钟
-
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity divider is
     port(
-            CLK: in std_logic;
-            RST: in std_logic;
-            N: in integer;
-            O: out std_logic
+            CLK: in std_logic; -- CLK: 原始时钟
+            RST: in std_logic; -- RST: 清零
+            N: in integer;     -- N: 源周期/输出周期（N=2时，2分频）
+            O: out std_logic   -- O: 输出时钟
         );
 end entity divider;
 

@@ -5,11 +5,11 @@ use ieee.std_logic_unsigned.all;
 
 entity matrix_input is
     port(
-            CLK:in std_logic;
-            CLR:in std_logic;
-            kcol:in std_logic_vector(3 downto 0);
-            krow:out std_logic_vector(3 downto 0);
-            seg_num:out integer
+            CLK:in std_logic;                      -- CLK: 时钟
+            CLR:in std_logic;                      -- CKR: 清零
+            kcol:in std_logic_vector(3 downto 0);  -- kcol: 列信号
+            krow:out std_logic_vector(3 downto 0); -- krow: 行信号
+            seg_num:out integer                    -- seg_num: 输出数字
         );
 end matrix_input;
 
