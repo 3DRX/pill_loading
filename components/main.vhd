@@ -14,7 +14,8 @@ entity main is
             S5: in std_logic;
             OUTNUM: out std_logic_vector(7 downto 0);
             SELNUM: out std_logic_vector(7 downto 0);
-            TEST: out std_logic
+            RED: out std_logic;
+            GREEN: out std_logic
         );
 end entity main;
 
@@ -25,15 +26,11 @@ architecture Behavioral of main is
     signal OS3: std_logic;
     signal OS4: std_logic;
     signal OS5: std_logic;
-    -- 输入数字
-    signal ipt_num: integer range 0 to 9;
     -- 分频后的时钟
     signal one_second: std_logic := '0';
     signal mos_refresh_clk: std_logic := '0';
     signal bling_clk: std_logic := '0';
     signal debounce_clk: std_logic := '0';
-    -- 计数器输出
-    signal ten_counter: integer := 0;
     -- 数码管显示输出
     -- 计数值
     signal count_ints: integer_vector(7 downto 0) := (others => 0);
@@ -42,15 +39,20 @@ architecture Behavioral of main is
     -- 显示输出值
     signal mos_ints: integer_vector(7 downto 0) := (others => 0);
     signal mos_dots: std_logic_vector(7 downto 0) := "11101011";
+    -- 加闪烁后的输出值
     signal o_mos_ints: integer_vector(7 downto 0) := (others => 0);
     signal o_mos_dots: std_logic_vector(7 downto 0) := (others => '0');
     -- 正在闪烁的位，1有效
     signal bling_bit: std_logic_vector(7 downto 0);
-    -- 键盘输入值
+    -- 键盘输入的数字
     signal matrix_num: integer := 0;
     -- 当前设定的最大值
     signal t_pill_max: integer;
     signal t_bottle_max: integer;
+    -- 红灯状态
+    signal red_light: std_logic;
+    -- 绿灯状态
+    signal green_light: std_logic;
     component mos_driver
         port(
                 INTS: in integer_vector(7 downto 0);
@@ -129,6 +131,22 @@ architecture Behavioral of main is
              );
     end component;
 begin
+
+    process(START)
+    begin
+        case START is
+            when '1' =>
+                red_light <= '0';
+                green_light <= '1';
+            when '0' =>
+                red_light <= '1';
+                green_light <= '0';
+        end case;
+    end process;
+
+    RED <= red_light;
+    GREEN <= green_light;
+
     the_count_pill_controller: count_pill_controller
     port map(
                 CLK => CLK,
@@ -190,16 +208,7 @@ begin
                 Clock => debounce_clk,
                 Reset => '0',
                 button_in => S5,
-                pulse_out => TEST
-            );
-
-    -- 时钟分频成秒
-    divide_second: divider
-    port map(
-                CLK => CLK,
-                RST => '0',
-                N => 100000000,
-                O => one_second
+                pulse_out => OS5
             );
 
     divide_bling: divider
@@ -233,15 +242,6 @@ begin
                 SET_INTS => set_ints,
                 MOS_INTS => mos_ints
             );
-
-    -- the_counter: counter
-    -- port map(
-    --             CLK => one_second,
-    --             RST => not START,
-    --             N => 10,
-    --             O => ten_counter,
-    --             C => open
-    --         );
 
     the_mos_driver: mos_driver
     port map(
