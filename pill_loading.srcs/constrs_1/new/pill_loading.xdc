@@ -86,3 +86,6 @@ set_property IOSTANDARD LVCMOS33 [get_ports GREEN]
 set_property IOSTANDARD LVCMOS33 [get_ports RED]
 set_property PACKAGE_PIN K17 [get_ports RED]
 set_property PACKAGE_PIN A21 [get_ports GREEN]
+
+set_property IOSTANDARD LVCMOS33 [get_ports BUZZ]
+set_property PACKAGE_PIN A19 [get_ports BUZZ]

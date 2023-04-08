@@ -15,7 +15,8 @@ entity main is
             OUTNUM: out std_logic_vector(7 downto 0);
             SELNUM: out std_logic_vector(7 downto 0);
             RED: out std_logic;
-            GREEN: out std_logic
+            GREEN: out std_logic;
+            BUZZ: out std_logic
         );
 end entity main;
 
@@ -127,7 +128,8 @@ architecture Behavioral of main is
                  START: in std_logic;       -- 1有效
                  PILL_MAX: in integer;      -- 每瓶最大药片数
                  BOTTLE_MAX: in integer;    -- 最大瓶数
-                 COUNT_INTS: out integer_vector(7 downto 0)
+                 COUNT_INTS: out integer_vector(7 downto 0);
+                 BUZZ: out std_logic
              );
     end component;
 begin
@@ -153,7 +155,8 @@ begin
                 START => START,
                 PILL_MAX => t_pill_max,
                 BOTTLE_MAX => t_bottle_max,
-                COUNT_INTS => count_ints
+                COUNT_INTS => count_ints,
+                BUZZ => BUZZ
             );
 
     the_set_num_controller: set_num_controller
