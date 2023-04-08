@@ -1,5 +1,6 @@
 set_property IOSTANDARD LVCMOS33 [get_ports CLK]
 set_property IOSTANDARD LVCMOS33 [get_ports START]
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets START]
 set_property IOSTANDARD LVCMOS33 [get_ports {OUTNUM[7]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {OUTNUM[6]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {OUTNUM[5]}]

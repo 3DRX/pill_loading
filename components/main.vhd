@@ -35,14 +35,19 @@ architecture Behavioral of main is
     -- 计数器输出
     signal ten_counter: integer := 0;
     -- 数码管显示输出
-    type ints is array (1 to 8) of integer;
-    type dots is array (1 to 8) of std_logic;
-    signal mos_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
-    signal mos_dots: dots := ('1', '1', '0', '1', '0', '1', '1', '1');
-    signal o_mos_ints: ints := (1, 2, 3, 4, 5, 6, 7, 8);
-    signal o_mos_dots: dots := ('1', '1', '0', '1', '0', '1', '1', '1');
+    -- 计数值
+    signal count_ints: integer_vector(7 downto 0) := (others => 0);
+    -- 设置值
+    signal set_ints: integer_vector(7 downto 0) := (others => 0);
+    -- 显示输出值
+    signal mos_ints: integer_vector(7 downto 0) := (others => 0);
+    signal mos_dots: std_logic_vector(7 downto 0) := "11101011";
+    signal o_mos_ints: integer_vector(7 downto 0) := (others => 0);
+    signal o_mos_dots: std_logic_vector(7 downto 0) := (others => '0');
     -- 正在闪烁的位，1有效
     signal bling_bit: std_logic_vector(7 downto 0) := "00000000";
+    -- 键盘输入值
+    signal matrix_num: integer := 0;
     component bling_selecter
         port (
                  S1: in std_logic;          -- 右按钮
@@ -62,12 +67,12 @@ architecture Behavioral of main is
     end component;
     component mos_driver
         port(
-        D8, D7, D6, D5, D4, D3, D2, D1: in integer;
-        CLK: in std_logic;
-        DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
-        OUTNUM: out std_logic_vector(7 downto 0);
-        SELNUM: out std_logic_vector(7 downto 0)
-    );
+                INTS: in integer_vector(7 downto 0);
+                DOTS: in std_logic_vector(7 downto 0);
+                CLK: in std_logic;
+                OUTNUM: out std_logic_vector(7 downto 0);
+                SELNUM: out std_logic_vector(7 downto 0)
+            );
     end component;
     component divider
         port(
@@ -88,13 +93,14 @@ architecture Behavioral of main is
     end component;
     component bling_driver
         port (
-        D8, D7, D6, D5, D4, D3, D2, D1: in integer;
-        DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
-        bling_clk: in std_logic;
-        bling_bit: in std_logic_vector(7 downto 0);
-        OD8, OD7, OD6, OD5, OD4, OD3, OD2, OD1: out integer;
-        ODOT8, ODOT7, ODOT6, ODOT5, ODOT4, ODOT3, ODOT2, ODOT1: out std_logic
-    );
+                 bling_clk: in std_logic;
+                 -- 闪烁的位，1有效
+                 bling_bit: in std_logic_vector(7 downto 0);
+                 MOS_INTS: in integer_vector(7 downto 0);
+                 MOS_DOTS: in std_logic_vector(7 downto 0);
+                 O_MOS_INTS: out integer_vector(7 downto 0);
+                 O_MOS_DOTS: out std_logic_vector(7 downto 0)
+             );
     end component;
     component DeBounce
         port(
@@ -103,6 +109,14 @@ architecture Behavioral of main is
                 button_in : in std_logic;
                 pulse_out : out std_logic
             );
+    end component;
+    component ints_switcher
+        port (
+                 START: in std_logic;
+                 COUNT_INTS: in integer_vector(7 downto 0);
+                 SET_INTS: in integer_vector(7 downto 0);
+                 MOS_INTS: out integer_vector(7 downto 0)
+             );
     end component;
 begin
 
@@ -179,14 +193,39 @@ begin
                 O => mos_refresh_clk
             );
 
+    -- the_ints_switcher: ints_switcher
+    -- port map(
+    --             START => START,
+    --             COUNT_INTS => count_ints,
+    --             SET_INTS => set_ints,
+    --             MOS_INTS => mos_ints
+    --         );
+
     -- the_matrix_input: matrix_input
     -- port map(
     --             CLK => CLK,
     --             CLR => START,
     --             kcol => kcol,
     --             krow => krow,
-    --             seg_num => output_mos
+    --             seg_num => matrix_num
     --         );
+
+    -- process(matrix_num, START, bling_bit)
+    -- begin
+    --     if START = '0' then
+    --         case bling_bit is
+    --             when "00001000" =>
+    --                 set_ints(3) <= matrix_num;
+    --             when "00000100" =>
+    --                 set_ints(2) <= matrix_num;
+    --             when "00000010" =>
+    --                 set_ints(1) <= matrix_num;
+    --             when "00000001" =>
+    --                 set_ints(0) <= matrix_num;
+    --             when others =>
+    --         end case;
+    --     end if;
+    -- end process;
 
     the_counter: counter
     port map(
@@ -199,16 +238,18 @@ begin
 
     process(ten_counter)
     begin
-        mos_ints <= (
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter,
-                    ten_counter
-                );
+        if START = '1' then
+            mos_ints <= (
+                        ten_counter,
+                        ten_counter,
+                        ten_counter,
+                        ten_counter,
+                        ten_counter,
+                        ten_counter,
+                        ten_counter,
+                        ten_counter
+                    );
+        end if;
     end process;
 
     the_bling_selecter: bling_selecter
@@ -221,22 +262,8 @@ begin
 
     the_mos_driver: mos_driver
     port map(
-                D8 => o_mos_ints(8),
-                D7 => o_mos_ints(7),
-                D6 => o_mos_ints(6),
-                D5 => o_mos_ints(5),
-                D4 => o_mos_ints(4),
-                D3 => o_mos_ints(3),
-                D2 => o_mos_ints(2),
-                D1 => o_mos_ints(1),
-                DOT8 => o_mos_dots(8),
-                DOT7 => o_mos_dots(7),
-                DOT6 => o_mos_dots(6),
-                DOT5 => o_mos_dots(5),
-                DOT4 => o_mos_dots(4),
-                DOT3 => o_mos_dots(3),
-                DOT2 => o_mos_dots(2),
-                DOT1 => o_mos_dots(1),
+                INTS => o_mos_ints,
+                DOTS => o_mos_dots,
                 CLK => mos_refresh_clk,
                 OUTNUM => OUTNUM,
                 SELNUM => SELNUM
@@ -246,38 +273,10 @@ begin
     port map(
                 bling_clk => bling_clk,
                 bling_bit => bling_bit,
-                D8 => mos_ints(8),
-                D7 => mos_ints(7),
-                D6 => mos_ints(6),
-                D5 => mos_ints(5),
-                D4 => mos_ints(4),
-                D3 => mos_ints(3),
-                D2 => mos_ints(2),
-                D1 => mos_ints(1),
-                DOT8 => mos_dots(8),
-                DOT7 => mos_dots(7),
-                DOT6 => mos_dots(6),
-                DOT5 => mos_dots(5),
-                DOT4 => mos_dots(4),
-                DOT3 => mos_dots(3),
-                DOT2 => mos_dots(2),
-                DOT1 => mos_dots(1),
-                OD8 => o_mos_ints(8),
-                OD7 => o_mos_ints(7),
-                OD6 => o_mos_ints(6),
-                OD5 => o_mos_ints(5),
-                OD4 => o_mos_ints(4),
-                OD3 => o_mos_ints(3),
-                OD2 => o_mos_ints(2),
-                OD1 => o_mos_ints(1),
-                ODOT8 => o_mos_dots(8),
-                ODOT7 => o_mos_dots(7),
-                ODOT6 => o_mos_dots(6),
-                ODOT5 => o_mos_dots(5),
-                ODOT4 => o_mos_dots(4),
-                ODOT3 => o_mos_dots(3),
-                ODOT2 => o_mos_dots(2),
-                ODOT1 => o_mos_dots(1)
+                MOS_INTS => mos_ints,
+                MOS_DOTS => mos_dots,
+                O_MOS_INTS => o_mos_ints,
+                O_MOS_DOTS => o_mos_dots
             );
 
 end Behavioral;

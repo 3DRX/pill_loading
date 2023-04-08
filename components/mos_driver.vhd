@@ -6,43 +6,26 @@ use IEEE.STD_LOGIC_1164.ALL;
 -- DOT 小数点，'1' 不亮，'0' 亮
 entity mos_driver is
     port(
-    D8, D7, D6, D5, D4, D3, D2, D1: in integer;
-    CLK: in std_logic;
-    DOT8, DOT7, DOT6, DOT5, DOT4, DOT3, DOT2, DOT1: in std_logic;
-    OUTNUM: out std_logic_vector(7 downto 0);
-    SELNUM: out std_logic_vector(7 downto 0)
-);
+            INTS: in integer_vector(7 downto 0);
+            DOTS: in std_logic_vector(7 downto 0);
+            CLK: in std_logic;
+            OUTNUM: out std_logic_vector(7 downto 0);
+            SELNUM: out std_logic_vector(7 downto 0)
+        );
 end mos_driver;
 
 architecture Behavioral of mos_driver is
-    type ints is array (1 to 8) of integer;
-    type dots is array (1 to 8) of std_logic;
-    signal the_ints: ints;
-    signal the_dots: dots;
+    signal the_ints: integer_vector(7 downto 0);
+    signal the_dots: std_logic_vector(7 downto 0);
     signal out_temp: std_logic_vector(7 downto 0) := "11111111";
     signal sel_temp: std_logic_vector(7 downto 0) := "11111111";
-    signal refreshing_bit: integer := 1;
+    signal refreshing_bit: integer := 0;
 begin
     process(CLK)
     begin
         if CLK'event and CLK = '1' then
-            the_ints(1) <= D1;
-            the_ints(2) <= D2;
-            the_ints(3) <= D3;
-            the_ints(4) <= D4;
-            the_ints(5) <= D5;
-            the_ints(6) <= D6;
-            the_ints(7) <= D7;
-            the_ints(8) <= D8;
-            the_dots(1) <= DOT1;
-            the_dots(2) <= DOT2;
-            the_dots(3) <= DOT3;
-            the_dots(4) <= DOT4;
-            the_dots(5) <= DOT5;
-            the_dots(6) <= DOT6;
-            the_dots(7) <= DOT7;
-            the_dots(8) <= DOT8;
-
+            the_ints <= INTS;
+            the_dots <= DOTS;
             if the_ints(refreshing_bit) = 0 then
                 out_temp <= "0000001" & the_dots(refreshing_bit);
             elsif the_ints(refreshing_bit) = 1 then
@@ -69,26 +52,26 @@ begin
                 out_temp <= "11111101";
             end if;
 
-            if refreshing_bit = 1 then
+            if refreshing_bit = 0 then
                 sel_temp <= "11111110";
-            elsif refreshing_bit = 2 then
+            elsif refreshing_bit = 1 then
                 sel_temp <= "11111101";
-            elsif refreshing_bit = 3 then
+            elsif refreshing_bit = 2 then
                 sel_temp <= "11111011";
-            elsif refreshing_bit = 4 then
+            elsif refreshing_bit = 3 then
                 sel_temp <= "11110111";
-            elsif refreshing_bit = 5 then
+            elsif refreshing_bit = 4 then
                 sel_temp <= "11101111";
-            elsif refreshing_bit = 6 then
+            elsif refreshing_bit = 5 then
                 sel_temp <= "11011111";
-            elsif refreshing_bit = 7 then
+            elsif refreshing_bit = 6 then
                 sel_temp <= "10111111";
-            elsif refreshing_bit = 8 then
+            elsif refreshing_bit = 7 then
                 sel_temp <= "01111111";
             end if;
 
-            if refreshing_bit = 8 then
-                refreshing_bit <= 1;
+            if refreshing_bit = 7 then
+                refreshing_bit <= 0;
             else
                 refreshing_bit <= refreshing_bit + 1;
             end if;
